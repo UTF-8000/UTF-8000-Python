@@ -221,8 +221,8 @@ class UTF8000IncrementalDecoder:
         final_start_byte_n_bits_content = idx_0
         first_non_start_byte_n_bits_content_mandatory = 5 - final_start_byte_n_bits_content
 
-        # Perform checking against overlong encodings.
-        # We forbid overlong encodings for two main reasons in my opinion:
+        # Perform checking against overlong encoding.
+        # We forbid overlong encoding for two main reasons in my opinion:
         #
         # 1: Security.
         #    To make sure 0b11100000 0b10000000 0b10000000 0b10000000
@@ -237,12 +237,18 @@ class UTF8000IncrementalDecoder:
         #
         mask_start, mask_non_start = OVERLONG_MASKS_N_BYTE[final_start_byte_n_bits_content]
 
-        if not mask_non_start:
+        if idx_0 == 5:
             # All of the mandatory content bits are
             # contained together in the <<final start byte<<.
             #
-            # We can immediately check for overlong encoding, and we don't
-            # need to check the first non-start byte.
+            # We check for overlong encoding in only the final start byte immediately.
+            # We do not need to check the first non-start byte,
+            # nor do we wait for it before performing overlong checking.
+            #
+            # It seems better computationally streamlined / CPU predictable /
+            # deterministic to check `if idx_0 == 5`
+            # than to check `if not mask_non_start`,
+            # albeit the latter is more idiomatic.
             #
             # Examples:
             # UTF-8           Only possible for 2 byte UTF-8
@@ -251,13 +257,25 @@ class UTF8000IncrementalDecoder:
             if not start_byte & mask_start:
                 self._on_error_overlong()
 
+            # Now we can wait for the first non-start byte,
+            # and we do not need to check it.
             first_non_start_byte = yield from self._await_continuation_byte()
         else:
+            # We wait for the first non-start byte, with which we
+            # check for overlong encoding.
             first_non_start_byte = yield from self._await_continuation_byte()
 
-            if not mask_start:
+            if idx_0 == 0:
                 # All of the mandatory content bits are
                 # contained together in the >>first non-start byte>>.
+                #
+                # We do not need to check the final start byte.
+                # We check for overlong encoding in only the first non-start byte.
+                #
+                # It seems better computationally streamlined / CPU predictable /
+                # deterministic to check `if idx_0 == 0`
+                # than to check `if not mask_start`,
+                # albeit the latter is more idiomatic.
                 #
                 # Examples:
                 #
@@ -272,6 +290,8 @@ class UTF8000IncrementalDecoder:
                 # straddled across two bytes,
                 # starting in the final start byte and continuing into
                 # the first non-start byte.
+                #
+                # We employ both masks.
                 #
                 # Examples:
                 #
