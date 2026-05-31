@@ -174,13 +174,16 @@ class UTF8000Byte:
         else:
             base_prefix = "0b" if do_base_prefix else ""
 
-        if self.is_continuation_byte:
-            # The digits start with '10'.
+        # Calculate the number of self-synchronization prefix bits.
+        if self.is_ascii:
+            # '0' for ASCII, a special case.
+            n_bits_continuation_prefix = 1
+        elif not self.is_continuation_byte:
+            # '11' for the first byte of a UTF-8000 code unit.
             n_bits_continuation_prefix = 2
         else:
-            # This is the first byte of a UTF-8000 encoded int.
-            # The digits don't start with '10'.
-            n_bits_continuation_prefix = 0
+            # '10' for a continuation byte of a UTF-8000 code unit.
+            n_bits_continuation_prefix = 2
 
         n_bits_content_total     = self.n_bits_content_total
         n_bits_content_mandatory = self.n_bits_content_mandatory
@@ -188,7 +191,7 @@ class UTF8000Byte:
         n_bits_start_sequence    = 8 - n_bits_continuation_prefix - n_bits_content_total
 
         str_continuation_prefix = self._format_bit_field(
-            n_bits_continuation_prefix, 6,
+            n_bits_continuation_prefix, 8 - n_bits_continuation_prefix,
             color = color.CSI_BOLD + color.CSI_FG_CYAN, do_color = do_color
         )
         str_start_sequence_bits = self._format_bit_field(
