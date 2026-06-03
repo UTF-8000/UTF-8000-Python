@@ -3,7 +3,8 @@ name = "UTF-8000"
 dynamic = ["version"]
 description = "Unlimited UTF-8!"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
 dependencies = []
 
 [project.urls]
