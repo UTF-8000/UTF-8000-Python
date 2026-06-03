@@ -41,12 +41,12 @@ utf-8000 decode
 
 ### Color key:
 
-- Bright Magenta: start sequence bits `111...110`
-- Bright Cyan: continuation byte prefix `10`
+- Bright Cyan: self-synchronization prefix `0` or `11` or `10`
+- Bright Magenta: start bits `111...110`
 - Bright Green: mandatory content bits
 - Green: content bits
 
-Observe the first byte completely filled with 1s from the start sequence bits. The start sequence bits continue on into the continuation bytes, the first also being completely filled. The third byte contains the end of the start sequence bits, that is the two 1s and the terminating 0. The five mandatory content bits are in bright green, and the rest of the content is in green. Notice that at least one of the 'mandatory content bits' is a 1 to avoid an overlong encoding.
+Observe that the first byte has a self-synchronization prefix of `11` and is otherwise completely filled with 1s from the start bits. The start bits continue on into the continuation bytes which have a self-synchronization prefix of `10`. The second byte is also completely filled with start bits. The third byte contains the end of the start bits, that is the two 1s and the terminating 0. The five mandatory content bits are in bright green, and the rest of the content is in green. Notice that at least one of the 'mandatory content bits' is a 1 to avoid an overlong encoding.
 
 ### Using `utf-8000 encode`
 
