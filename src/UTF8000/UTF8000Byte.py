@@ -81,7 +81,7 @@ def byte_is_continuation(c: int) -> bool:
 
 def int_find_highest_zero(c: int, n_bits: int) -> int:
     """
-    Find the highest 0 in the lowest `n_bits` of `c`.
+    Return the index of the highest 0 bit in the lowest `n_bits` of `c`.
 
     Returns -1 if a 0 bit is not found.
     """
@@ -110,9 +110,23 @@ def int_find_highest_one(c: int, n_bits: int) -> int:
     return ret
 
 def idx_highest_zero(c: int, n_bits: int) -> int:
+    """
+    Return the index of the highest 0 bit in the lowest `n_bits` of `c`.
+
+    Returns -1 if a 0 bit is not found.
+    """
+
     return int_find_highest_zero(c, n_bits)
 
 def n_start_seq_ones(idx_0: int, n_bits: int) -> int:
+    """
+    Pass in `idx_0`, the result of calling `idx_highest_zero` with `n_bits`.
+
+    Returns the number of extra bytes we expect in a code unit
+    having read a 0 bit at `idx_0`, ie how many 1 bits there are
+    above `idx_0` in the window of `n_bits`.
+    """
+
     return (n_bits - 1) - idx_0
 
 class UTF8000Byte:
