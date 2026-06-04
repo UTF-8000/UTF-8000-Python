@@ -118,7 +118,7 @@ def idx_highest_zero(c: int, n_bits: int) -> int:
 
     return int_find_highest_zero(c, n_bits)
 
-def n_start_seq_ones(idx_0: int, n_bits: int) -> int:
+def n_start_bits_ones(idx_0: int, n_bits: int) -> int:
     """
     Pass in `idx_0`, the result of calling `idx_highest_zero` with `n_bits`.
 
