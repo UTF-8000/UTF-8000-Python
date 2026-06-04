@@ -2,9 +2,12 @@ from typing import Generator
 
 from .UTF8000Byte import (
     UTF8000Byte,
-    byte_is_continuation, idx_highest_zero, n_start_bits_ones,
-    N_BITS_FIRST_BYTE, N_BITS_CONTINUATION_BYTE,
-    OVERLONG_MASK_2_BYTE, OVERLONG_MASKS_N_BYTE
+    N_BITS_IN_BYTE,
+    MULTIBYTE_PROGRAMMABLE_N_BITS,
+    OVERLONG_MASK_2_BYTE,
+    OVERLONG_MASKS_MULTIBYTE,
+    byte_is_continuation,
+    idx_highest_zero, n_start_bits_ones,
 )
 from .UTF8000Int import UTF8000Int
 
@@ -92,7 +95,7 @@ class UTF8000IncrementalDecoder:
         # Find the position of the highest 0 in the 8 bits of the byte.
         # This zero allows us to tell how many bytes of UTF-8(000) we
         # are expecting.
-        idx_0 = idx_highest_zero(start_byte, N_BITS_FIRST_BYTE)
+        idx_0 = idx_highest_zero(start_byte, N_BITS_IN_BYTE)
 
         if idx_0 == 7:
             #
@@ -159,7 +162,7 @@ class UTF8000IncrementalDecoder:
 
         # The number of 1 bits in the start sequence is the number
         # (at least so far) of UTF-8000 bytes that we are expecting.
-        n_bytes_expected = n_start_bits_ones(idx_0, N_BITS_FIRST_BYTE)
+        n_bytes_expected = n_start_bits_ones(idx_0, N_BITS_IN_BYTE)
 
         if idx_0 != -1:
             #
@@ -191,11 +194,11 @@ class UTF8000IncrementalDecoder:
                 # continuation byte contains. This zero allows us to tell
                 # how many further continuation start bytes of UTF-8000
                 # we are expecting.
-                idx_0 = idx_highest_zero(start_byte, N_BITS_CONTINUATION_BYTE)
+                idx_0 = idx_highest_zero(start_byte, MULTIBYTE_PROGRAMMABLE_N_BITS)
 
                 # The number of 1 bits in the start sequence is the number
                 # of additional UTF-8000 bytes that we are expecting.
-                n_bytes_expected += n_start_bits_ones(idx_0, N_BITS_CONTINUATION_BYTE)
+                n_bytes_expected += n_start_bits_ones(idx_0, MULTIBYTE_PROGRAMMABLE_N_BITS)
 
                 if idx_0 != -1:
                     #
@@ -235,7 +238,7 @@ class UTF8000IncrementalDecoder:
         #
         # At this point `start_byte` is the final start byte.
         #
-        mask_start, mask_non_start = OVERLONG_MASKS_N_BYTE[final_start_byte_n_bits_content]
+        mask_start, mask_non_start = OVERLONG_MASKS_MULTIBYTE[final_start_byte_n_bits_content]
 
         if idx_0 == 5:
             # All of the mandatory content bits are

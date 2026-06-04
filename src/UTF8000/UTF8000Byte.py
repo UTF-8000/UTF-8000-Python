@@ -3,18 +3,46 @@ from . import color
 # size_t counting num of bytes; this is the only machine limitation
 # little bittian ordered (1, 2, 4, 8, 16, 32, 64, 128)
 
-ZERO               = 0b00000000
+### Common
 
-ASCII_PREFIX       = 0b00000000
-ASCII_PREFIX_MASK  = 0b10000000
-ASCII_CONTENT_MASK = 0b01111111
+ZERO = 0b00000000
 
-CONTINUATION_PREFIX       = 0b10000000
-CONTINUATION_PREFIX_MASK  = 0b11000000
-CONTINUATION_CONTENT_MASK = 0b00111111
-CONTINUATION_FILLED       = 0b10111111
+N_BITS_IN_BYTE = 8
 
-FIRST_BYTE_FULL = 0b11111111
+### ASCII
+
+ASCII_SELF_SYNC_N_BITS = 1
+ASCII_SELF_SYNC_MASK   = 0b10000000
+ASCII_SELF_SYNC_BITS   = 0b00000000
+
+ASCII_PROGRAMMABLE_N_BITS = 7
+ASCII_PROGRAMMABLE_MASK   = 0b01111111
+
+### Multibyte
+
+MULTIBYTE_SELF_SYNC_N_BITS            = 2
+MULTIBYTE_SELF_SYNC_MASK              = 0b11000000
+MULTIBYTE_SELF_SYNC_BITS_FIRST        = 0b11000000
+MULTIBYTE_SELF_SYNC_BITS_CONTINUATION = 0b10000000
+
+MULTIBYTE_PROGRAMMABLE_N_BITS = 6
+MULTIBYTE_PROGRAMMABLE_MASK   = 0b00111111
+
+MULTIBYTE_SELF_PUNCTUATION_ONES_FULL = 0b00111111
+MULTIBYTE_SELF_PUNCTUATION_ONES_SOME = (
+    0b00000000,
+    0b00100000,
+    0b00110000,
+    0b00111000,
+    0b00111100,
+    0b00111110,
+)
+
+MULTIBYTE_FILLED_FIRST = 0b11111111
+# aka MULTIBYTE_SELF_SYNC_BITS_FIRST | MULTIBYTE_SELF_PUNCTUATION_ONES_FULL
+
+MULTIBYTE_FILLED_CONTINUATION = 0b10111111
+# aka MULTIBYTE_SELF_SYNC_BITS_CONTINUATION | MULTIBYTE_SELF_PUNCTUATION_ONES_FULL
 
 OVERLONG_MASK_2_BYTE = 0b00011110
 
@@ -24,7 +52,7 @@ OVERLONG_MASK_2_BYTE = 0b00011110
 # better to have them static like this. In particular if we were to implement
 # this decoder in C, these would maybe be shoved inside the decoder function
 # for even better performance.
-OVERLONG_MASKS_N_BYTE = (
+OVERLONG_MASKS_MULTIBYTE = (
     (0b00000000, 0b00111110),
     (0b00000001, 0b00111100),
     (0b00000011, 0b00111000),
@@ -33,13 +61,10 @@ OVERLONG_MASKS_N_BYTE = (
     (0b00011111, 0b00000000),
 )
 
-# How many bits in a first byte and continuation byte are
-# programmable with either start sequence bits, or content bits.
-N_BITS_FIRST_BYTE        = 8
-N_BITS_CONTINUATION_BYTE = 6
+### Unicode Ranges
 
 # MIN = minimum
-# SUP = supremum
+# SUP = supremum (ie not inclusive)
 UNICODE_MIN = 0x0
 UNICODE_SUP = 0x11_0000
 
@@ -74,10 +99,10 @@ def extract_n_bits_at_m(x: int, n: int, m: int, downshift: bool = True):
     return ret
 
 def byte_is_ascii(c: int) -> bool:
-    return c & ASCII_PREFIX_MASK == ASCII_PREFIX
+    return c & ASCII_SELF_SYNC_MASK == ASCII_SELF_SYNC_BITS
 
 def byte_is_continuation(c: int) -> bool:
-    return c & CONTINUATION_PREFIX_MASK == CONTINUATION_PREFIX
+    return c & MULTIBYTE_SELF_SYNC_MASK == MULTIBYTE_SELF_SYNC_BITS_CONTINUATION
 
 def int_find_highest_zero(c: int, n_bits: int) -> int:
     """
@@ -291,7 +316,7 @@ class UTF8000Byte:
         Return a '0b11111111' filled up first start byte.
         """
         return cls(
-            FIRST_BYTE_FULL,
+            MULTIBYTE_FILLED_FIRST,
             is_continuation_byte = False,
             is_start_byte = True,
             n_bits_content_total = 0,
@@ -304,7 +329,7 @@ class UTF8000Byte:
         Return a '0b10111111' filled up continuation start byte.
         """
         return cls(
-            CONTINUATION_FILLED,
+            MULTIBYTE_FILLED_CONTINUATION,
             is_continuation_byte = True,
             is_start_byte = True,
             n_bits_content_total = 0,

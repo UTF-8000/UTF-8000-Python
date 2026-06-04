@@ -1,6 +1,8 @@
 from .UTF8000Byte import (
-    FIRST_BYTE_FULL,
-    CONTINUATION_PREFIX, CONTINUATION_CONTENT_MASK, CONTINUATION_FILLED,
+    MULTIBYTE_SELF_SYNC_BITS_CONTINUATION,
+    MULTIBYTE_PROGRAMMABLE_MASK,
+    MULTIBYTE_FILLED_FIRST,
+    MULTIBYTE_FILLED_CONTINUATION,
     ceil_div, fill_n_bits_shifted_by_m
 )
 
@@ -26,7 +28,7 @@ def encode(x: int, signed: bool = False) -> bytes:
     y: int = x
 
     while y > 0:
-        final_6_bits = y & CONTINUATION_CONTENT_MASK
+        final_6_bits = y & MULTIBYTE_PROGRAMMABLE_MASK
         contents.insert(0, final_6_bits)
         y >>= 6
 
@@ -41,7 +43,7 @@ def encode(x: int, signed: bool = False) -> bytes:
 
         n_bytes_pure_content_and_final_start = n_utf_8000_bytes_needed
     else:
-        first_byte = FIRST_BYTE_FULL
+        first_byte = MULTIBYTE_FILLED_FIRST
 
         ret_ints.append(first_byte)
 
@@ -50,10 +52,10 @@ def encode(x: int, signed: bool = False) -> bytes:
         n_filled_continuation_start_bytes, n_ones_in_final_start_byte = divmod(n_remaining_start_ones, 6)
 
         for _ in range(n_filled_continuation_start_bytes):
-            ret_ints.append(CONTINUATION_FILLED)
+            ret_ints.append(MULTIBYTE_FILLED_CONTINUATION)
 
         final_start_byte_start_bits = fill_n_bits_shifted_by_m(n_ones_in_final_start_byte, 6 - n_ones_in_final_start_byte)
-        final_start_byte = CONTINUATION_PREFIX | final_start_byte_start_bits
+        final_start_byte = MULTIBYTE_SELF_SYNC_BITS_CONTINUATION | final_start_byte_start_bits
 
         n_full_start_bytes = 1 + n_filled_continuation_start_bytes
         n_bytes_pure_content_and_final_start = n_utf_8000_bytes_needed - n_full_start_bytes
@@ -65,7 +67,7 @@ def encode(x: int, signed: bool = False) -> bytes:
     ret_ints.append(final_start_byte)
 
     for non_start_byte_contents in contents:
-        non_start_byte = CONTINUATION_PREFIX | non_start_byte_contents
+        non_start_byte = MULTIBYTE_SELF_SYNC_BITS_CONTINUATION | non_start_byte_contents
         ret_ints.append(non_start_byte)
 
     return bytes(ret_ints)
