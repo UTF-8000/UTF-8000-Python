@@ -109,7 +109,7 @@ def int_find_highest_one(c: int, n_bits: int) -> int:
         ret -= 1
     return ret
 
-def idx_start_seq_0(c: int, n_bits: int) -> int:
+def idx_highest_zero(c: int, n_bits: int) -> int:
     return int_find_highest_zero(c, n_bits)
 
 def n_start_seq_ones(idx_0: int, n_bits: int) -> int:
