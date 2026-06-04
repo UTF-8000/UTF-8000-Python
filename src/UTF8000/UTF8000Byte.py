@@ -351,7 +351,7 @@ class UTF8000Byte:
             c,
             is_continuation_byte = True,
             is_start_byte = False,
-            n_bits_content_total = 6,
+            n_bits_content_total = MULTIBYTE_PROGRAMMABLE_N_BITS,
             n_bits_content_mandatory = n_bits_content_mandatory
         )
 
@@ -370,6 +370,6 @@ class UTF8000Byte:
             c,
             is_continuation_byte = True,
             is_start_byte = False,
-            n_bits_content_total = 6,
+            n_bits_content_total = MULTIBYTE_PROGRAMMABLE_N_BITS,
             n_bits_content_mandatory = 0
         )
