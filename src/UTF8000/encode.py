@@ -26,22 +26,22 @@ def encode(x: int, signed: bool = False) -> bytes:
 
         return bytes(ret_ints)
 
-    n_bits_content_total: int = 0
+    n_bits_content_occupied: int = 0
     y: int = x
 
     while y > MULTIBYTE_PROGRAMMABLE_MASK:
         final_6_bits = y & MULTIBYTE_PROGRAMMABLE_MASK
         ret_ints.insert(0, final_6_bits)
-        n_bits_content_total += MULTIBYTE_PROGRAMMABLE_N_BITS
+        n_bits_content_occupied += MULTIBYTE_PROGRAMMABLE_N_BITS
         y >>= MULTIBYTE_PROGRAMMABLE_N_BITS
 
     final_6_bits = y
     ret_ints.insert(0, final_6_bits)
     while y > 0:
-        n_bits_content_total += 1
+        n_bits_content_occupied += 1
         y >>= 1
 
-    n_utf_8000_bytes_needed = ceil_div(n_bits_content_total - 1, 5)
+    n_utf_8000_bytes_needed = ceil_div(n_bits_content_occupied - 1, 5)
 
     ret_ints = [0 for _ in range(n_utf_8000_bytes_needed - len(ret_ints))] + ret_ints
 
