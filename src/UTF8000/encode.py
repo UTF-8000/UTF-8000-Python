@@ -26,16 +26,20 @@ def encode(x: int, signed: bool = False) -> bytes:
         return bytes(ret_ints)
 
     contents: list[int] = []
+    n_bits_content_total: int = 0
     y: int = x
 
-    while y > 0:
+    while y > MULTIBYTE_PROGRAMMABLE_MASK:
         final_6_bits = y & MULTIBYTE_PROGRAMMABLE_MASK
         contents.insert(0, final_6_bits)
+        n_bits_content_total += MULTIBYTE_PROGRAMMABLE_N_BITS
         y >>= MULTIBYTE_PROGRAMMABLE_N_BITS
 
-    n_bits_content_highest_six = contents[0].bit_length() # this feels cheeky to use
-
-    n_bits_content_total = n_bits_content_highest_six + MULTIBYTE_PROGRAMMABLE_N_BITS * (len(contents) - 1)
+    final_6_bits = y
+    contents.insert(0, final_6_bits)
+    while y > 0:
+        n_bits_content_total += 1
+        y >>= 1
 
     n_utf_8000_bytes_needed = ceil_div(n_bits_content_total - 1, 5)
 
