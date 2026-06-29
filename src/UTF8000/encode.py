@@ -43,36 +43,6 @@ def encode(x: int, signed: bool = False) -> bytes:
 
     n_utf_8000_bytes_needed = ceil_div(n_bits_content_total - 1, 5)
 
-    if n_utf_8000_bytes_needed < 8:
-        final_start_byte = fill_n_bits_shifted_by_m(n_utf_8000_bytes_needed, 8 - n_utf_8000_bytes_needed)
-
-        n_bytes_pure_content_and_final_start = n_utf_8000_bytes_needed
-    else:
-        first_byte = MULTIBYTE_FILLED_FIRST
-
-        ret_ints.append(first_byte)
-
-        n_remaining_start_ones = n_utf_8000_bytes_needed - 8
-
-        n_filled_continuation_start_bytes, n_ones_in_final_start_byte = divmod(n_remaining_start_ones, MULTIBYTE_PROGRAMMABLE_N_BITS)
-
-        for _ in range(n_filled_continuation_start_bytes):
-            ret_ints.append(MULTIBYTE_FILLED_CONTINUATION)
-
-        final_start_byte_start_bits = fill_n_bits_shifted_by_m(n_ones_in_final_start_byte, MULTIBYTE_PROGRAMMABLE_N_BITS - n_ones_in_final_start_byte)
-        final_start_byte = MULTIBYTE_SELF_SYNC_BITS_CONTINUATION | final_start_byte_start_bits
-
-        n_full_start_bytes = 1 + n_filled_continuation_start_bytes
-        n_bytes_pure_content_and_final_start = n_utf_8000_bytes_needed - n_full_start_bytes
-
-    if len(contents) == n_bytes_pure_content_and_final_start:
-        final_start_byte_contents = contents.pop(0)
-        final_start_byte |= final_start_byte_contents
-
-    ret_ints.append(final_start_byte)
-
-    for non_start_byte_contents in contents:
-        non_start_byte = MULTIBYTE_SELF_SYNC_BITS_CONTINUATION | non_start_byte_contents
-        ret_ints.append(non_start_byte)
+    raise NotImplementedError
 
     return bytes(ret_ints)
