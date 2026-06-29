@@ -1,6 +1,7 @@
 import argparse
 
-from UTF8000.encode import fancy_encode
+from UTF8000.encode import encode
+from UTF8000.decode import UTF8000IncrementalDecoder
 from UTF8000.UTF8000Byte import (
     UNICODE_SUP, UTF_8_1_SUP, UTF_8_2_SUP,
     UNICODE_SURROGATE_HIGH_MIN, UNICODE_SURROGATE_HIGH_SUP,
@@ -21,7 +22,10 @@ def main_info(args: argparse.Namespace) -> None:
     n = parse_codepoint(n_str)
 
     # Encode integer `n` in UTF-8000
-    fancy_encoded = fancy_encode(n)
+    encoded = encode(n)
+    decoder = UTF8000IncrementalDecoder()
+    decoder.feed(encoded)
+    fancy_encoded = next(iter(decoder)).utf_8000_bytes
 
     # Print some info about the bytes / codepoint
     info_lines = []

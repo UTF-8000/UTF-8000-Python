@@ -79,13 +79,14 @@ U+000A
 ## Package Contents
 
 - encode.py
-  - `encode(x: int) -> bytes`: Encode an unsigned integer in UTF-8000 and return the bytes
-  - `fancy_encode(x: int) -> tuple[UTF8000Byte]`: Encode an unsigned integer in UTF-8000 and return 'fancy' `UTF8000Byte`s, useful for education and inspection.
+  - `encode(x: int) -> bytes`: Encode an unsigned integer in UTF-8000 and return the bytes.
 - decode.py
-  - `UTF8000IncrementalDecoder`: An incremental decoder class that can be fed bytes, and can be iterated over, yielding `UTF8000Int`s when full byte sequences have been supplied and decoded.
+  - `UTF8000IncrementalDecoder`: A 'fancy' incremental decoder class that can be fed `bytes`, and can be iterated over, yielding `UTF8000Int`s when full byte sequences have been supplied and decoded.
+- UTF8000Int.py
+  - A wrapper around `UTF8000Byte`s that form a byte sequence.
 - UTF8000Byte.py
-  - `UTF8000Byte`: a 'fancy' byte wrapper around UTF-8000 bytes that
-  - Various constants and utility functions
+  - `UTF8000Byte`: a 'fancy' byte wrapper around UTF-8000 bytes that is useful for education and inspection.
+  - Various constants and utility functions.
 
 ## See Also
 
