@@ -8,7 +8,7 @@ license-files = ["LICENSE"]
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/jb2170/UTF-8000/"
+Homepage = "https://github.com/UTF-8000/UTF-8000-Python/"
 
 [project.scripts]
 utf-8000 = "UTF8000.CLI:main"
