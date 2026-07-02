@@ -201,52 +201,52 @@ class UTF8000Byte:
 
         if 'x' in format_spec_args:
             # Return hex digits.
-            base_prefix = "0x" if do_base_prefix else ""
-            return f"{base_prefix}{self.c:02x}"
+            str_base_prefix = "0x" if do_base_prefix else ""
+            return f"{str_base_prefix}{self.c:02x}"
         elif 'X' in format_spec_args:
             # Return HEX digits.
-            base_prefix = "0X" if do_base_prefix else ""
-            return f"{base_prefix}{self.c:02X}"
+            str_base_prefix = "0X" if do_base_prefix else ""
+            return f"{str_base_prefix}{self.c:02X}"
 
         if 'B' in format_spec_args:
-            base_prefix = "0B" if do_base_prefix else ""
+            str_base_prefix = "0B" if do_base_prefix else ""
         else:
-            base_prefix = "0b" if do_base_prefix else ""
+            str_base_prefix = "0b" if do_base_prefix else ""
 
         # Calculate the number of self-synchronization prefix bits.
         if self.is_ascii:
             # '0' for ASCII, a special case.
-            n_bits_continuation_prefix = 1
+            n_bits_self_sync = 1
         elif not self.is_continuation_byte:
             # '11' for the first byte of a UTF-8000 code unit.
-            n_bits_continuation_prefix = 2
+            n_bits_self_sync = 2
         else:
             # '10' for a continuation byte of a UTF-8000 code unit.
-            n_bits_continuation_prefix = 2
+            n_bits_self_sync = 2
 
         n_bits_content_total     = self.n_bits_content_total
         n_bits_content_mandatory = self.n_bits_content_mandatory
         n_bits_content_optional  = n_bits_content_total - n_bits_content_mandatory
-        n_bits_start_sequence    = 8 - n_bits_continuation_prefix - n_bits_content_total
+        n_bits_start             = 8 - n_bits_self_sync - n_bits_content_total
 
-        str_continuation_prefix = self._format_bit_field(
-            n_bits_continuation_prefix, 8 - n_bits_continuation_prefix,
+        str_self_sync_bits = self._format_bit_field(
+            n_bits_self_sync, 8 - n_bits_self_sync,
             color = color.CSI_BOLD + color.CSI_FG_CYAN, do_color = do_color
         )
-        str_start_sequence_bits = self._format_bit_field(
-            n_bits_start_sequence, n_bits_content_total,
+        str_start_bits = self._format_bit_field(
+            n_bits_start, n_bits_content_total,
             color = color.CSI_BOLD + color.CSI_FG_MAGENTA, do_color = do_color
         )
-        str_content_mandatory = self._format_bit_field(
+        str_mandatory_content_bits = self._format_bit_field(
             n_bits_content_mandatory, n_bits_content_optional,
             color = color.CSI_BOLD + color.CSI_FG_GREEN, do_color = do_color
         )
-        str_content_optional = self._format_bit_field(
+        str_optional_content_bits = self._format_bit_field(
             n_bits_content_optional, 0,
             color = color.CSI_FG_GREEN, do_color = do_color
         )
 
-        return f"{base_prefix}{str_continuation_prefix}{str_start_sequence_bits}{str_content_mandatory}{str_content_optional}"
+        return f"{str_base_prefix}{str_self_sync_bits}{str_start_bits}{str_mandatory_content_bits}{str_optional_content_bits}"
 
     def _format_bit_field(
         self, width: int, offset: int,
@@ -297,7 +297,7 @@ class UTF8000Byte:
     @classmethod
     def TwoByteStartByte(cls, c: int):
         """
-        Return a '0b110XXXXx' start byte for a two byte UTF-8 sequence.
+        Return a '0b110XXXXx' start byte for a two byte UTF-8 code unit.
 
         `c` is the whole octet, including the upper '110' bits,
         not just the quintet of content.

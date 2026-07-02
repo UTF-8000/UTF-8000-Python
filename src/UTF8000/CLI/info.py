@@ -15,7 +15,7 @@ from .common import (
 
 def main_info(args: argparse.Namespace) -> None:
     # Initialise from args
-    do_prefix: bool = getattr(args, "#")
+    do_base_prefix: bool = getattr(args, "#")
     do_color:  bool = yes_no_is_stdout_tty(args.color)
     n_str:     str  = args.n_str
 
@@ -78,7 +78,7 @@ def main_info(args: argparse.Namespace) -> None:
     ## Hex bytes
     line_parts = []
     line_parts.append("Hex:")
-    if do_prefix:
+    if do_base_prefix:
         fmt = "#04x"
     else:
         fmt = "02x"
@@ -86,7 +86,7 @@ def main_info(args: argparse.Namespace) -> None:
     info_lines.append(" ".join(line_parts))
 
     fmt_parts = []
-    if do_prefix:
+    if do_base_prefix:
         fmt_parts.append("#")
     if do_color:
         fmt_parts.append("color")

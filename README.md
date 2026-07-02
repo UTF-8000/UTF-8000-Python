@@ -81,9 +81,9 @@ U+000A
 - encode.py
   - `encode(x: int) -> bytes`: Encode an unsigned integer in UTF-8000 and return the bytes.
 - decode.py
-  - `UTF8000IncrementalDecoder`: A 'fancy' incremental decoder class that can be fed `bytes`, and can be iterated over, yielding `UTF8000Int`s when full byte sequences have been supplied and decoded.
+  - `UTF8000IncrementalDecoder`: A 'fancy' incremental decoder class that can be fed `bytes`, and can be iterated over, yielding `UTF8000Int`s when full code units have been supplied and decoded.
 - UTF8000Int.py
-  - A wrapper around `UTF8000Byte`s that form a byte sequence.
+  - A wrapper around `UTF8000Byte`s that form a code unit.
 - UTF8000Byte.py
   - `UTF8000Byte`: a 'fancy' byte wrapper around UTF-8000 bytes that is useful for education and inspection.
   - Various constants and utility functions.

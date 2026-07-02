@@ -32,7 +32,7 @@ class UTF8000IncrementalDecoder:
         """
         Close the parser.
 
-        Raises EOFError if we are part way through parsing a UTF-8000 sequence.
+        Raises EOFError if we are part way through parsing a UTF-8000 code unit.
 
         Otherwise returns `None`.
         """
@@ -121,16 +121,16 @@ class UTF8000IncrementalDecoder:
             # Treat two byte UTF-8 as a special case.
             #
             # Two byte UTF-8 has only 4 mandatory content bits to check
-            # against overlong encoding, unlike all other UTF-8000 sequences that
+            # against overlong encoding, unlike all other UTF-8000 code units that
             # have 5 to check. This is because the jump from ASCII to UTF-8 means
             # we jump from 7 bits of content to 11, a gain of 4 bits of content,
             # whereas with every next additional continuation byte jumping from
             # k-byte UTF-8(000) to k+1-byte UTF-8(000) we gain 5 bits
             # of content; +6 bits from the continuation byte, -1 from extending
-            # the start sequence bits by 1.
+            # the start bits by 1.
             #
             # Two byte UTF-8 has all 4 mandatory content bits in one byte,
-            # the start byte, unlike all other UTF-8000 sequences
+            # the start byte, unlike all other UTF-8000 code units
             # which may have them straddled across two bytes.
             #
             # Fun fact: It is for this reason why you will never see the bytes
@@ -160,20 +160,21 @@ class UTF8000IncrementalDecoder:
 
             return UTF8000Int(parsed_bytes)
 
-        # The number of 1 bits in the start sequence is the number
+        # The number of 1 bits in the self-synchronization prefix
+        # plus the start bits is the number
         # (at least so far) of UTF-8000 bytes that we are expecting.
         n_bytes_expected = n_start_bits_ones(idx_0, N_BITS_IN_BYTE)
 
         if idx_0 != -1:
             #
-            # The terminating 0 bit of the start sequence bits
+            # The terminating 0 bit of the start bits
             # was found in the first byte.
             # Thus this is the first and final start byte.
             #
             is_final_start_byte_a_continuation_byte = False
         else:
             #
-            # The terminating 0 bit of the start sequence bits
+            # The terminating 0 bit of the start bits
             # !was not! found in the first byte.
             # This means that the byte is 0b11111111.
             # This means that we are expecting *at least* 8 bytes of UTF-8000.
@@ -196,20 +197,20 @@ class UTF8000IncrementalDecoder:
                 # we are expecting.
                 idx_0 = idx_highest_zero(start_byte, MULTIBYTE_PROGRAMMABLE_N_BITS)
 
-                # The number of 1 bits in the start sequence is the number
+                # The number of 1 bits in the start bits is the number
                 # of additional UTF-8000 bytes that we are expecting.
                 n_bytes_expected += n_start_bits_ones(idx_0, MULTIBYTE_PROGRAMMABLE_N_BITS)
 
                 if idx_0 != -1:
                     #
-                    # The terminating 0 bit of the start sequence bits
+                    # The terminating 0 bit of the start bits
                     # was found in the continuation byte.
                     # Thus this is the final start byte.
                     #
                     break
                 else:
                     #
-                    # The terminating 0 bit of the start sequence bits
+                    # The terminating 0 bit of the start bits
                     # !was not! found in the continuation byte.
                     # This means that the byte is 0b10111111.
                     # We continue reading into the continuation bytes
@@ -336,13 +337,13 @@ class UTF8000IncrementalDecoder:
                 # Park the generator in this 'parking lot' so that
                 # if `close()` is called on the generator at this point
                 # it's not an error, whereas if we are in the middle of
-                # parsing a UTF-8000 sequence below that *should* be an
+                # parsing a UTF-8000 code unit below that *should* be an
                 # EOFError if `close()` is called early.
             except GeneratorExit:
                 return
             try:
                 x = yield from self._utf_8000_parse_single()
             except GeneratorExit as e:
-                raise EOFError("Partially decoded UTF-8000 sequence didn't finish") from e
+                raise EOFError("Partially decoded UTF-8000 code unit didn't finish") from e
             else:
                 self._results.append(x)
