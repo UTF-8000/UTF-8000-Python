@@ -123,8 +123,8 @@ class UTF8000Byte:
         n_bits_content_mandatory: int,
     ) -> None:
         self.c = c
-        self.is_start_byte            = is_start_byte
         self.is_continuation_byte     = is_continuation_byte
+        self.is_start_byte            = is_start_byte
         self.n_bits_content_total     = n_bits_content_total
         self.n_bits_content_mandatory = n_bits_content_mandatory
 
