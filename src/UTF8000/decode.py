@@ -160,10 +160,10 @@ class UTF8000IncrementalDecoder:
 
             return UTF8000Int(parsed_bytes)
 
-        # The number of 1 bits in the self-synchronization prefix
-        # plus the start bits is the number
+        # Two plus the number of 1 bits in the start bits is the number
         # (at least so far) of UTF-8000 bytes that we are expecting.
-        n_bytes_expected = n_start_bits_ones(idx_0, N_BITS_IN_BYTE)
+        n_bytes_expected = 2
+        n_bytes_expected += n_start_bits_ones(idx_0, MULTIBYTE_PROGRAMMABLE_N_BITS)
 
         if idx_0 != -1:
             #
