@@ -32,7 +32,7 @@ def parse_codepoint(s: str) -> int:
         s = s.removeprefix(U_PLUS_PREFIX)
         base = 16
     else:
-        base = 10
+        base = 0
 
     return int(s, base)
 
