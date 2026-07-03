@@ -8,19 +8,13 @@ from .UTF8000Byte import (
     ceil_div
 )
 
-def encode(x: int, signed: bool = False) -> bytes:
+def encode(x: int) -> bytes:
     """
     Encode an integer `x` into UTF-8000 bytes.
     """
 
-    if signed:
-        # XXX TODO
-        # Implement signed behavior using the zigzag function.
-        # Really this could be a layer outside `encode`.
-        raise NotImplementedError
-
     if x < 0:
-        raise ValueError("Cannot encode negative number in unsigned mode")
+        raise ValueError("Cannot encode negative number")
 
     ret_ints: list[int] = []
 
