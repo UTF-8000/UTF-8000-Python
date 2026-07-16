@@ -22,9 +22,6 @@ def get_cli_args() -> argparse.Namespace:
             h,
         )),
     )
-    parser_info.add_argument("-#", action = "store_true",
-        help = f"Show base prefixes {'0b'!r} and {'0x'!r}"
-    )
     parser_info.add_argument("--color", choices = ["yes", "no", "auto"], default = "auto",
         help = "Highlight the anatomy of UTF-8000 bytes in color"
     )
