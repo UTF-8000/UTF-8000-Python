@@ -75,11 +75,10 @@ def main_info(args: argparse.Namespace) -> None:
     info_lines.append(" ".join(line_parts))
 
     ## Hex bytes
-    line_parts = []
-    line_parts.append("Hex:")
-    line_parts.extend(f"{int(b):02x}" for b in fancy_encoded)
-    info_lines.append(" ".join(line_parts))
+    hex_bytes = " ".join(f"{int(b):02x}" for b in fancy_encoded)
+    info_lines.append(f"Hex: {hex_bytes}")
 
+    ## Bin bytes
     fmt_parts = []
     if do_color:
         fmt_parts.append("color")
@@ -89,10 +88,7 @@ def main_info(args: argparse.Namespace) -> None:
     # Remember GitHub not sanitizing their input:
     # https://www.youtube.com/watch?v=m5t08CREHcE
 
-    ## Bin bytes
-    line_parts = []
-    line_parts.append("Bin:")
-    line_parts.extend(f"{b:{fmt}}" for b in fancy_encoded)
-    info_lines.append(" ".join(line_parts))
+    bin_bytes = " ".join(f"{b:{fmt}}" for b in fancy_encoded)
+    info_lines.append(f"Bin: {bin_bytes}")
 
     print("\n\n".join(info_lines))
