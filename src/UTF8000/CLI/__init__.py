@@ -45,6 +45,9 @@ def get_cli_args() -> argparse.Namespace:
             "Output is separated by newlines",
         )),
     )
+    parser_decode.add_argument("--color", choices = ["yes", "no", "auto"], default = "auto",
+        help = "Highlight the anatomy of UTF-8000 bytes in color"
+    )
 
     args = parser.parse_args()
 
