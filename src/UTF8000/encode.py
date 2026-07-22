@@ -54,12 +54,12 @@ def encode(x: int) -> bytes:
         # Any larger code unit size would lead to an overlong encoding!
         n_utf_8000_bytes_needed = ceil_div(n_bits_content_occupied - 1, 5)
 
-        # Left pad the array of content hextets with empty bytes,
+        # Left pad the array of content sextets with empty bytes,
         # to the size `n_utf_8000_bytes_needed`.
         # This array is then ready for its bytes to be
         # empowered with start bits to provide self-punctuation, and
         # crowned with prefixes to provide self-synchronization,
-        # which delivers us from content bit hextets to UTF-8000 octets.
+        # which delivers us from content bit sextets to UTF-8000 octets.
         ret_ints = [0 for _ in range(n_utf_8000_bytes_needed - len(ret_ints))] + ret_ints
 
         ### Add the self-punctuation start bits:

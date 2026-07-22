@@ -344,7 +344,7 @@ class UTF8000Byte:
         mandatory content bits >= 0.
 
         `c` is the whole octet, including the upper '10' bits,
-        not just the hextet of content.
+        not just the sextet of content.
         """
 
         return cls(
@@ -363,7 +363,7 @@ class UTF8000Byte:
         no mandatory content bits.
 
         `c` is the whole octet, including the upper '10' bits,
-        not just the hextet of content.
+        not just the sextet of content.
         """
 
         return cls(
