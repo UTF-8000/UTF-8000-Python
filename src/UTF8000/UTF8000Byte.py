@@ -295,9 +295,9 @@ class UTF8000Byte:
         )
 
     @classmethod
-    def TwoByteStartByte(cls, c: int):
+    def TwoByteFirstByte(cls, c: int):
         """
-        Return a '0b110XXXXx' start byte for a two byte UTF-8 code unit.
+        Return a '0b110XXXXx' first byte for a two byte UTF-8 code unit.
 
         `c` is the whole octet, including the upper '110' bits,
         not just the quintet of content.
