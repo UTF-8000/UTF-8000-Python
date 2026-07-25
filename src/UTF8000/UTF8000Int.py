@@ -8,9 +8,6 @@ class UTF8000Int:
     def __str__(self) -> str:
         return " ".join(str(b) for b in self.utf_8000_bytes)
 
-    def debug_str(self) -> str:
-        return " ".join(b.debug_str() for b in self.utf_8000_bytes)
-
     def __int__(self) -> int:
         ret = 0
         content_bytes = (b for b in self.utf_8000_bytes if b.is_content_byte)
@@ -24,8 +21,19 @@ class UTF8000Int:
         return len(self.utf_8000_bytes)
 
     @property
-    def n_bits_capacity(self) -> int:
-        if self.n_bytes == 1:
-            return 7
-        else:
-            return 1 + 5 * self.n_bytes
+    def n_bits_content_total(self) -> int:
+        """
+        The number of content bits that the code unit contains.
+
+        This is the 'capacity' of the code unit, not the count of 'occupied' bits.
+        """
+        return sum(b.n_bits_content_total for b in self.utf_8000_bytes)
+
+    @property
+    def n_bits_content_mandatory(self) -> int:
+        """
+        The number of mandatory content bits that the code unit contains.
+
+        This is the 'capacity' of the code unit, not the count of 'occupied' bits.
+        """
+        return sum(b.n_bits_content_mandatory for b in self.utf_8000_bytes)
