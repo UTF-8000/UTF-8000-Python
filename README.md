@@ -1,8 +1,6 @@
 # UTF-8000
 
-Unlimited UTF-8!
-
-ASCII ⊆ UTF-8 ⊆ UTF-8000
+Unlimited UTF-8! ASCII ⊆ UTF-8 ⊆ UTF-8000.
 
 - UTF-8000 is the correct way to expand UTF-8 indefinitely.
 - This repository contains a Python implementation of UTF-8000.
