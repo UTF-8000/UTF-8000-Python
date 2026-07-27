@@ -3,7 +3,7 @@ import argparse
 from UTF8000.encode import encode
 from UTF8000.decode import UTF8000IncrementalDecoder
 from UTF8000.UTF8000Byte import (
-    UNICODE_SUP, UTF_8_1_SUP, UTF_8_2_SUP,
+    UNICODE_SUP, UTF_8_1_SUP,
     UNICODE_SURROGATE_HIGH_MIN, UNICODE_SURROGATE_HIGH_SUP,
     UNICODE_SURROGATE_LOW_MIN, UNICODE_SURROGATE_LOW_SUP
 )
@@ -24,7 +24,8 @@ def main_info(args: argparse.Namespace) -> None:
     encoded = encode(n)
     decoder = UTF8000IncrementalDecoder()
     decoder.feed(encoded)
-    fancy_encoded = next(iter(decoder)).utf_8000_bytes
+    code_unit = next(iter(decoder))
+    fancy_encoded = code_unit.utf_8000_bytes
 
     # Print some info about the bytes / codepoint
     info_lines = []
@@ -57,20 +58,11 @@ def main_info(args: argparse.Namespace) -> None:
             line_parts.append("(ASCII)")
     else:
         line_parts.append("UTF-8000")
-    if n < UTF_8_1_SUP:
-        n_bits = 7
-        n_bits_mandatory = 0
-    else:
-        n_bits = 5 * len(fancy_encoded) + 1
-        if n < UTF_8_2_SUP:
-            n_bits_mandatory = 4
-        else:
-            n_bits_mandatory = 5
     line_parts.append(f"|")
-    line_parts.append(f"{n_bits}")
+    line_parts.append(f"{code_unit.n_bits_content_total}")
     line_parts.append("bits")
     line_parts.append(f"|")
-    line_parts.append(f"{n_bits_mandatory}")
+    line_parts.append(f"{code_unit.n_bits_content_mandatory}")
     line_parts.append("mandatory bits")
     info_lines.append(" ".join(line_parts))
 
