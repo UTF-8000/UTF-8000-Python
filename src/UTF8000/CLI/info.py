@@ -52,10 +52,10 @@ def main_info(args: argparse.Namespace) -> None:
     line_parts = []
     line_parts.append(f"{len(fancy_encoded)}")
     line_parts.append("byte")
-    if n < UNICODE_SUP:
+    if n < UTF_8_1_SUP:
+        line_parts.append("ASCII")
+    elif n < UNICODE_SUP:
         line_parts.append("UTF-8")
-        if n < UTF_8_1_SUP:
-            line_parts.append("(ASCII)")
     else:
         line_parts.append("UTF-8000")
     line_parts.append(f"|")
