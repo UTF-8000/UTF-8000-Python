@@ -25,7 +25,6 @@ def main_info(args: argparse.Namespace) -> None:
     decoder = UTF8000IncrementalDecoder()
     decoder.feed(encoded)
     code_unit = next(iter(decoder))
-    fancy_encoded = code_unit.utf_8000_bytes
 
     # Print some info about the bytes / codepoint
     info_lines = []
@@ -50,24 +49,19 @@ def main_info(args: argparse.Namespace) -> None:
 
     ## ASCII / UTF-8 / UTF-8000 length
     line_parts = []
-    line_parts.append(f"{len(fancy_encoded)}")
-    line_parts.append("byte")
     if n < UTF_8_1_SUP:
-        line_parts.append("ASCII")
+        codepoint_family = "ASCII"
     elif n < UNICODE_SUP:
-        line_parts.append("UTF-8")
+        codepoint_family = "UTF-8"
     else:
-        line_parts.append("UTF-8000")
-    line_parts.append(f"|")
-    line_parts.append(f"{code_unit.n_bits_content_total}")
-    line_parts.append("bits")
-    line_parts.append(f"|")
-    line_parts.append(f"{code_unit.n_bits_content_mandatory}")
-    line_parts.append("mandatory bits")
-    info_lines.append(" ".join(line_parts))
+        codepoint_family = "UTF-8000"
+    line_parts.append(f"{code_unit.n_bytes} byte {codepoint_family}")
+    line_parts.append(f"{code_unit.n_bits_content_total} bits")
+    line_parts.append(f"{code_unit.n_bits_content_mandatory} mandatory bits")
+    info_lines.append(" | ".join(line_parts))
 
     ## Hex bytes
-    hex_bytes = " ".join(f"{int(b):02x}" for b in fancy_encoded)
+    hex_bytes = " ".join(f"{int(b):02x}" for b in code_unit.utf_8000_bytes)
     info_lines.append(f"Hex: {hex_bytes}")
 
     ## Bin bytes
@@ -80,7 +74,7 @@ def main_info(args: argparse.Namespace) -> None:
     # Remember GitHub not sanitizing their input:
     # https://www.youtube.com/watch?v=m5t08CREHcE
 
-    bin_bytes = " ".join(f"{b:{fmt}}" for b in fancy_encoded)
+    bin_bytes = " ".join(f"{b:{fmt}}" for b in code_unit.utf_8000_bytes)
     info_lines.append(f"Bin: {bin_bytes}")
 
     print("\n\n".join(info_lines))
