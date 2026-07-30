@@ -1,5 +1,7 @@
 """
 UTF-8000 CLI
+
+| Please switch over from PyPI:`UTF-8000` to PyPI:`UTF-8K`
 """
 
 import argparse
