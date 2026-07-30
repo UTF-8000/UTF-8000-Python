@@ -1,5 +1,5 @@
 """
-UTF-8000 CLI
+UTF-8K CLI
 """
 
 import argparse

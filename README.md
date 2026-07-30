@@ -1,3 +1,3 @@
-# UTF-8000
+# UTF-8K
 
-Unlimited UTF-8! ASCII ⊆ UTF-8 ⊆ UTF-8000.
+Unlimited UTF-8! ASCII ⊆ UTF-8 ⊆ UTF-8K.

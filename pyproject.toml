@@ -1,5 +1,5 @@
 [project]
-name = "UTF-8000"
+name = "UTF-8K"
 dynamic = ["version"]
 description = "Unlimited UTF-8!"
 readme = "README.md"
@@ -8,16 +8,16 @@ license-files = ["LICENSE"]
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/UTF-8000/UTF-8000-Python/"
+Homepage = "https://github.com/UTF-8000/UTF-8K-Python/"
 
 [project.scripts]
-utf-8000 = "UTF8000.CLI:main"
+utf-8k = "UTF8K.CLI:main"
 
 [project.optional-dependencies]
 test = ["pytest"]
 
 [tool.setuptools.dynamic]
-version = {attr = "UTF8000.__version__"}
+version = {attr = "UTF8K.__version__"}
 
 [build-system]
 requires = ["setuptools>=61.0"]
